@@ -1,7 +1,7 @@
 
 import torch
 import torch.nn as nn
-from model.scr.decoder.decoder_layer import DecoderLayer
+from src.model.decoder.decoder_layer import DecoderLayer
 
 class Decoder(nn.Module):
     def __init__(self, output_dim, hid_dim, n_layers, n_heads, pf_dim, dropout, device, max_length=100):

@@ -1,6 +1,6 @@
 import torch.nn as nn
-from model.scr.common.multi_head_layer import MultiHeadAttentionLayer
-from model.scr.common.pos_wise_feed_layer import PositionWiseFeedforwardLayer
+from src.model.common.multi_head_layer import MultiHeadAttentionLayer
+from src.model.common.pos_wise_feed_layer import PositionWiseFeedforwardLayer
 
 
 class DecoderLayer(nn.Module):
