@@ -112,11 +112,15 @@ def main():
     SRC_PAD_IDX = tokenizer.pad_token_id
     TRG_PAD_IDX = tokenizer.pad_token_id
 
+    # [FIX] Define the max length to match CodeBERT's limit (512)
+    MAX_LEN = 512
+
     print(f"Vocab Size: {INPUT_DIM}, Pad IDX: {SRC_PAD_IDX}")
 
     # 2. Initialize Components
-    enc = Encoder(INPUT_DIM, HID_DIM, ENC_LAYERS, ENC_HEADS, ENC_PF_DIM, DROPOUT, DEVICE)
-    dec = Decoder(OUTPUT_DIM, HID_DIM, DEC_LAYERS, DEC_HEADS, DEC_PF_DIM, DROPOUT, DEVICE)
+    enc = Encoder(INPUT_DIM, HID_DIM, ENC_LAYERS, ENC_HEADS, ENC_PF_DIM, DROPOUT, DEVICE, max_length=MAX_LEN)
+    dec = Decoder(OUTPUT_DIM, HID_DIM, DEC_LAYERS, DEC_HEADS, DEC_PF_DIM, DROPOUT, DEVICE, max_length=MAX_LEN)
+
     model = Seq2Seq(enc, dec, SRC_PAD_IDX, TRG_PAD_IDX, DEVICE).to(DEVICE)
 
     # Apply init weights initially (will be overwritten if loading checkpoint)
@@ -156,7 +160,6 @@ def main():
         print("No existing checkpoint found. Starting training from scratch.")
 
     # 3. Training Loop
-    # Use start_epoch to continue where we left off
     if start_epoch >= EPOCHS:
         print(f"Training already completed ({start_epoch}/{EPOCHS} epochs). Increase EPOCHS to train more.")
         return
@@ -174,16 +177,12 @@ def main():
         print(f'\tTrain Loss: {train_loss:.3f} | Val Loss: {valid_loss:.3f}')
 
         # --- SAVE LOGIC ---
-        # We save at the end of EVERY epoch to ensure we can resume from the latest state.
-        # We also track best_valid_loss to know how good our best state was.
-
         if valid_loss < best_valid_loss:
             best_valid_loss = valid_loss
             print(f"\tNew best validation loss! (Saving checkpoint)")
         else:
             print(f"\tValidation loss did not improve. (Saving checkpoint to capture latest progress)")
 
-        # Save everything needed to resume
         checkpoint = {
             'epoch': epoch,
             'model_state_dict': model.state_dict(),
@@ -192,7 +191,6 @@ def main():
         }
         torch.save(checkpoint, CHECKPOINT_PATH)
         print(f"\tCheckpoint updated at {CHECKPOINT_PATH}")
-
 
 if __name__ == "__main__":
     main()
