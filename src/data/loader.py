@@ -5,7 +5,7 @@ from transformers import DataCollatorForSeq2Seq, AutoTokenizer
 
 
 def get_data_loaders(
-        data_path="./data/tokenized_dataset",
+        data_path="./processed",
         batch_size=32,
         model_checkpoint="microsoft/codebert-base"
 ):

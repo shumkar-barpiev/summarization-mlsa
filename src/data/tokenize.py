@@ -5,14 +5,11 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from datasets import load_dataset, DatasetDict
 from transformers import AutoTokenizer
-from src.data.helper import preprocess_code
-
-SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-PROJECT_ROOT = os.path.dirname(SCRIPT_DIR)
+from helper import preprocess_code
 
 RAW_DATASET_NAME = "Nan-Do/code-search-net-python"
 TOKENIZER_CHECKPOINT = "microsoft/codebert-base"
-OUTPUT_PATH = os.path.join(PROJECT_ROOT, "src", "data", "processed", "tokenized_dataset")
+OUTPUT_PATH = "./processed"
 MAX_LENGTH = 128
 
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
