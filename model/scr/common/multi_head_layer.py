@@ -1,0 +1,54 @@
+import torch
+import torch.nn as nn
+
+
+class MultiHeadAttentionLayer(nn.Module):
+    def __init__(self, hid_dim, n_heads, dropout, device):
+        super().__init__()
+
+        assert hid_dim % n_heads == 0
+
+        self.hid_dim = hid_dim
+        self.n_heads = n_heads
+        self.head_dim = hid_dim // n_heads
+
+        self.fc_q = nn.Linear(hid_dim, hid_dim)
+        self.fc_k = nn.Linear(hid_dim, hid_dim)
+        self.fc_v = nn.Linear(hid_dim, hid_dim)
+
+        self.fc_o = nn.Linear(hid_dim, hid_dim)
+
+        self.dropout = nn.Dropout(dropout)
+        self.scale = torch.sqrt(torch.FloatTensor([self.head_dim])).to(device)
+
+    def forward(self, query, key, value, mask=None):
+        batch_size = query.shape[0]
+
+        # Q, K, V = [batch size, seq len, hid dim]
+        Q = self.fc_q(query)
+        K = self.fc_k(key)
+        V = self.fc_v(value)
+
+        # Reshape for multi-head attention
+        # shape -> [batch size, n heads, seq len, head dim]
+        Q = Q.view(batch_size, -1, self.n_heads, self.head_dim).permute(0, 2, 1, 3)
+        K = K.view(batch_size, -1, self.n_heads, self.head_dim).permute(0, 2, 1, 3)
+        V = V.view(batch_size, -1, self.n_heads, self.head_dim).permute(0, 2, 1, 3)
+
+        # Calculate Energy (Scaled Dot-Product Attention)
+        energy = torch.matmul(Q, K.permute(0, 1, 3, 2)) / self.scale
+
+        if mask is not None:
+            energy = energy.masked_fill(mask == 0, -1e10)
+
+        attention = torch.softmax(energy, dim=-1)
+
+        # Weighted sum of values
+        x = torch.matmul(self.dropout(attention), V)
+
+        # Reshape back
+        x = x.permute(0, 2, 1, 3).contiguous().view(batch_size, -1, self.hid_dim)
+
+        x = self.fc_o(x)
+
+        return x, attention
