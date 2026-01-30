@@ -43,7 +43,8 @@ def main():
 
     print("Splitting dataset into Train (80%), Validation (10%), Test (10%)...")
 
-    train_test_valid = raw_dataset["train"].train_test_split(test_size=0.2, seed=42)
+    # train_test_valid = raw_dataset["train"].train_test_split(test_size=0.2, seed=42)
+    train_test_valid = raw_dataset.train_test_split(test_size=0.2, seed=42)
     test_valid = train_test_valid["test"].train_test_split(test_size=0.5, seed=42)
 
     dataset = DatasetDict({
@@ -57,7 +58,8 @@ def main():
         lambda x: tokenize(x, tokenizer),
         batched=True,
         num_proc=4,  # Use multiple CPU cores for speed
-        remove_columns=raw_dataset["train"].column_names
+        # remove_columns=raw_dataset["train"].column_names
+        remove_columns=raw_dataset.column_names
     )
 
     print(f"Saving processed dataset to {OUTPUT_PATH}...")
