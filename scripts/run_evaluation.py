@@ -19,9 +19,9 @@ MODEL_PATH = os.path.join(PROJECT_ROOT, "src", "model", "outcome", "transformer_
 DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 # Hyperparameters (Ensure these match train.py exactly)
-HID_DIM = 256
-ENC_LAYERS = 3
-DEC_LAYERS = 3
+HID_DIM = 64
+ENC_LAYERS = 1
+DEC_LAYERS = 1
 ENC_HEADS = 8
 DEC_HEADS = 8
 ENC_PF_DIM = 512
