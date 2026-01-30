@@ -12,8 +12,11 @@ from src.data.loader import get_data_loaders
 from src.model.encoder.encoder import Encoder
 from src.model.decoder.decoder import Decoder
 
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+PROJECT_ROOT = os.path.dirname(SCRIPT_DIR)
+
 # --- Config ---
-MODEL_PATH = "./models/transformer_model.pt"
+MODEL_PATH = os.path.join(PROJECT_ROOT, "src", "model", "outcome", "transformer_model.pt")
 TOKENIZER_NAME = "microsoft/codebert-base"
 DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 MAX_LEN = 50
