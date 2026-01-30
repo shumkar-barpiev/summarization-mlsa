@@ -5,12 +5,8 @@ import evaluate  # Hugging Face evaluate library
 from tqdm import tqdm
 from transformers import AutoTokenizer
 
-# --- Path Setup ---
-# 1. Get the folder where this script lives
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-# 2. Get project root
 PROJECT_ROOT = os.path.dirname(SCRIPT_DIR)
-# 3. Add project root to sys.path so we can import src
 sys.path.append(PROJECT_ROOT)
 
 from src.model.sec_to_sec import Seq2Seq
@@ -18,7 +14,6 @@ from src.data.loader import get_data_loaders
 from src.model.encoder.encoder import Encoder
 from src.model.decoder.decoder import Decoder
 
-# --- Configuration (MUST MATCH train.py) ---
 TOKENIZER_NAME = "microsoft/codebert-base"
 MODEL_PATH = os.path.join(PROJECT_ROOT, "src", "model", "outcome", "transformer_model.pt")
 DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -36,25 +31,9 @@ MAX_LEN = 512  # Match the value used in train.py
 
 
 def translate_sentence(sentence_tensor, model, device, max_len=100, sos_idx=0, eos_idx=2):
-    """
-    Generates a summary for a single input sequence using Greedy Decoding.
-    """
     model.eval()
 
-    # 1. Encode the source
-    # sentence_tensor shape: [1, seq_len]
     with torch.no_grad():
-        # Depending on your Encoder implementation, it might return just src or (src, mask)
-        # We assume the Seq2Seq forward handles the masking internally or we pass the raw indices
-
-        # Create a source mask (if your encoder needs it manually, otherwise Seq2Seq handles it)
-        # For simplicity, we stick to the standard Seq2Seq flow:
-
-        # Pass through Encoder
-        # We need to construct the mask manually if we call encoder directly,
-        # but let's use the model's logic if possible.
-        # Easier approach for standard Transformers:
-
         src_mask = model.make_src_mask(sentence_tensor)
         enc_src = model.encoder(sentence_tensor, src_mask)
 

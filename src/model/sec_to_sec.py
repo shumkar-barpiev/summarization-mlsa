@@ -18,11 +18,15 @@ class Seq2Seq(nn.Module):
         return src_mask
 
     def make_trg_mask(self, trg):
-        # trg_mask = [batch size, 1, trg len, trg len]
+        device = trg.device
+
         trg_pad_mask = (trg != self.trg_pad_idx).unsqueeze(1).unsqueeze(2)
 
+        # 3. Create Look-Ahead (Sequence) Mask
         trg_len = trg.shape[1]
-        trg_sub_mask = torch.tril(torch.ones((trg_len, trg_len), device=self.device)).bool()
+
+        # Returns [trg len, trg len] Lower Triangular Matrix
+        trg_sub_mask = torch.tril(torch.ones((trg_len, trg_len), device=device)).bool()
 
         trg_mask = trg_pad_mask & trg_sub_mask
         return trg_mask

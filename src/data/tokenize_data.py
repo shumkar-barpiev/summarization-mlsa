@@ -35,7 +35,8 @@ def main():
 
     print(f"Loading raw dataset: {RAW_DATASET_NAME}...")
     try:
-        raw_dataset = load_dataset(RAW_DATASET_NAME)
+        # raw_dataset = load_dataset(RAW_DATASET_NAME)
+        raw_dataset = load_dataset(RAW_DATASET_NAME, split='train[:10%]')
     except Exception as e:
         print(f"Error downloading dataset: {e}")
         return

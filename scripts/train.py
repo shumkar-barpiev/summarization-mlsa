@@ -27,9 +27,9 @@ CHECKPOINT_PATH = os.path.join(OUTPUT_DIR, CHECKPOINT_NAME)
 DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 # Hyperparameters
-HID_DIM = 256
-ENC_LAYERS = 3
-DEC_LAYERS = 3
+HID_DIM = 64
+ENC_LAYERS = 1
+DEC_LAYERS = 1
 ENC_HEADS = 8
 DEC_HEADS = 8
 ENC_PF_DIM = 512
@@ -39,6 +39,7 @@ LEARNING_RATE = 0.001
 EPOCHS = 10
 BATCH_SIZE = 32
 
+tokenizer = AutoTokenizer.from_pretrained(TOKENIZER_NAME)
 
 def init_weights(m):
     if hasattr(m, 'weight') and m.weight.dim() > 1:
@@ -56,7 +57,8 @@ def train_epoch(model, iterator, optimizer, criterion, clip):
         trg = batch['labels'].to(DEVICE)
 
         trg_input = trg.clone()
-        trg_input[trg_input == -100] = 1
+        # trg_input[trg_input == -100] = 1
+        trg_input[trg_input == -100] = tokenizer.pad_token_id
 
         optimizer.zero_grad()
 
@@ -104,7 +106,6 @@ def main():
     os.makedirs(OUTPUT_DIR, exist_ok=True)
 
     # 1. Load Data
-    tokenizer = AutoTokenizer.from_pretrained(TOKENIZER_NAME)
     train_loader, val_loader, _ = get_data_loaders(batch_size=BATCH_SIZE)
 
     INPUT_DIM = len(tokenizer)
