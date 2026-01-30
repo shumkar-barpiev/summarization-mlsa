@@ -3,9 +3,11 @@ from torch.utils.data import DataLoader
 from datasets import load_from_disk
 from transformers import DataCollatorForSeq2Seq, AutoTokenizer
 
+CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
+DEFAULT_DATA_PATH = os.path.join(CURRENT_DIR, "processed")
 
 def get_data_loaders(
-        data_path="./processed",
+        data_path=DEFAULT_DATA_PATH,
         batch_size=32,
         model_checkpoint="microsoft/codebert-base"
 ):

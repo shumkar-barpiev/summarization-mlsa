@@ -9,7 +9,9 @@ from helper import preprocess_code
 
 RAW_DATASET_NAME = "Nan-Do/code-search-net-python"
 TOKENIZER_CHECKPOINT = "microsoft/codebert-base"
-OUTPUT_PATH = "./processed"
+
+CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
+OUTPUT_PATH = os.path.join(CURRENT_DIR, "processed")
 MAX_LENGTH = 128
 
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
