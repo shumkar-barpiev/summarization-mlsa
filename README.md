@@ -67,6 +67,7 @@ Training a Transformer model is computationally intensive.
 - CPU: Training will likely take days and is not recommended.
 
 - GPU (Recommended): On a Tesla P100 or T4 (available on Kaggle/Colab), training takes approximately 3-4 hours for 10 epochs.
+`However, this depends heavily on GPU capacity—higher-end cards will complete the task much faster.`
 
 If you are using `Google Colab` or `Kaggle`, make sure to enable the GPU Accelerator in your runtime settings.
 
