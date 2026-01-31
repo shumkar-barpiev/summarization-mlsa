@@ -6,19 +6,23 @@ from transformers import AutoTokenizer
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from src.model.sec_to_sec import Seq2Seq
-from src.model.encoder.encoder import Encoder
-from src.model.decoder.decoder import Decoder
+try:
+    from src.model.sec_to_sec import Seq2Seq
+    from src.model.encoder.encoder import Encoder
+    from src.model.decoder.decoder import Decoder
+except ImportError as e:
+    print(f"CRITICAL ERROR: Could not import modules from 'src'.")
+    print(f"Detailed Error: {e}")
+    sys.exit(1)
 
-script_dir = os.path.dirname(os.path.abspath(__file__))
-project_root = os.path.dirname(script_dir)
-
-sys.path.append(project_root)
+current_script_dir = os.path.dirname(os.path.abspath(__file__))
+project_root = os.path.dirname(current_script_dir)
 
 MODEL_PATH = os.path.join(project_root, "src", "model", "outcome", "transformer_model.pt")
 TOKENIZER_NAME = "microsoft/codebert-base"
 DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
+# --- HYPERPARAMETERS  ---
 HID_DIM = 64
 ENC_LAYERS = 1
 DEC_LAYERS = 1
@@ -28,7 +32,6 @@ ENC_PF_DIM = 512
 DEC_PF_DIM = 512
 DROPOUT = 0.1
 MAX_LEN = 512
-
 
 def load_model():
     """Loads the tokenizer and the trained model."""
@@ -44,31 +47,31 @@ def load_model():
     pad_idx = tokenizer.pad_token_id
     model = Seq2Seq(enc, dec, pad_idx, pad_idx, DEVICE).to(DEVICE)
 
-    # Load Weights
-    checkpoint = torch.load(MODEL_PATH, map_location=DEVICE)
-    if 'model_state_dict' in checkpoint:
-        model.load_state_dict(checkpoint['model_state_dict'])
-    else:
-        model.load_state_dict(checkpoint)
+    try:
+        checkpoint = torch.load(MODEL_PATH, map_location=DEVICE)
+        if 'model_state_dict' in checkpoint:
+            model.load_state_dict(checkpoint['model_state_dict'])
+        else:
+            model.load_state_dict(checkpoint)
+    except RuntimeError as e:
+        print(f"\nError loading weights! Ensure HID_DIM matches training (Currently: {HID_DIM})")
+        print(f"Details: {e}")
+        sys.exit(1)
 
     model.eval()
     return model, tokenizer
 
-
 def predict(model, tokenizer, source_code, max_output_len=50):
     """Generates a summary for the given source code."""
-    # 1. Tokenize
     tokens = tokenizer.tokenize(source_code)[:MAX_LEN - 2]
     ids = [tokenizer.cls_token_id] + tokenizer.convert_tokens_to_ids(tokens) + [tokenizer.sep_token_id]
 
     src_tensor = torch.LongTensor(ids).unsqueeze(0).to(DEVICE)
     src_mask = model.make_src_mask(src_tensor)
 
-    # 2. Encode
     with torch.no_grad():
         enc_src = model.encoder(src_tensor, src_mask)
 
-    # 3. Decode (Greedy Search)
     trg_indexes = [tokenizer.cls_token_id]
 
     for i in range(max_output_len):
@@ -85,19 +88,14 @@ def predict(model, tokenizer, source_code, max_output_len=50):
 
         trg_indexes.append(pred_token)
 
-    # 4. Convert IDs to Text
     summary = tokenizer.decode(trg_indexes[1:], skip_special_tokens=True)
     return summary
 
-
 def main():
-    # Setup CLI Arguments
     parser = argparse.ArgumentParser(description='Generate a summary for Python source code.')
     parser.add_argument('input_code', type=str, help='The Python code string to summarize')
-
     args = parser.parse_args()
 
-    # Run Inference
     model, tokenizer = load_model()
     summary = predict(model, tokenizer, args.input_code)
 
@@ -105,9 +103,8 @@ def main():
     print("Code Input:")
     print(f"{args.input_code}")
     print("------------------------------------------------")
-    print(f"Generated Summary: \033[92m{summary}\033[0m")  # Green text
+    print(f"Generated Summary: \033[92m{summary}\033[0m")
     print("------------------------------------------------\n")
-
 
 if __name__ == "__main__":
     main()
