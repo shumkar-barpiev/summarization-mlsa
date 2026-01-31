@@ -4,18 +4,18 @@ import sys
 import argparse
 from transformers import AutoTokenizer
 
-current_dir = os.path.dirname(os.path.abspath(__file__))
-sys.path.append(current_dir)
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-try:
-    from src.model.sec_to_sec import Seq2Seq
-    from src.model.encoder.encoder import Encoder
-    from src.model.decoder.decoder import Decoder
-except ImportError:
-    print("Error: Could not find 'src' directory. Make sure you are running this from the project root.")
-    sys.exit(1)
+from src.model.sec_to_sec import Seq2Seq
+from src.model.encoder.encoder import Encoder
+from src.model.decoder.decoder import Decoder
 
-MODEL_PATH = os.path.join(current_dir, "src", "model", "outcome", "transformer_model.pt")
+script_dir = os.path.dirname(os.path.abspath(__file__))
+project_root = os.path.dirname(script_dir)
+
+sys.path.append(project_root)
+
+MODEL_PATH = os.path.join(project_root, "src", "model", "outcome", "transformer_model.pt")
 TOKENIZER_NAME = "microsoft/codebert-base"
 DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
