@@ -36,7 +36,7 @@ ENC_PF_DIM = 512
 DEC_PF_DIM = 512
 DROPOUT = 0.1
 LEARNING_RATE = 0.001
-EPOCHS = 6
+EPOCHS = 10
 BATCH_SIZE = 32
 
 tokenizer = AutoTokenizer.from_pretrained(TOKENIZER_NAME)
