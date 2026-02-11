@@ -106,30 +106,23 @@ The project utilizes a standard Seq2Seq Transformer architecture:
 
 ## 📊 Results
 
-- Epoch: 01 | Time: 9m 2s
-		Train Loss: 1.005 | Validation Loss: 0.895
-- Epoch: 02 | Time: 9m 3s
-		Train Loss: 0.998 | Validation Loss: 0.882
-- Epoch: 03 | Time: 9m 5s
-		Train Loss: 0.815 | Validation Loss: 0.640
-- Epoch: 04 | Time: 9m 5s
-		Train Loss: 0.666 | Validation Loss: 0.512
-- Epoch: 05 | Time: 9m 6s
-		Train Loss: 0.656 | Validation Loss: 0.498
-- Epoch: 06 | Time: 9m 8s
-		Train Loss: 0.654 | Validation Loss: 0.495
-- Epoch: 07 | Time: 9m 4s
+- Epoch: 01 | Time: 9m 4s
 		Train Loss: 0.461 | Validation Loss: 0.367
-- Epoch: 08 | Time: 9m 6s
-		Train Loss: 0.368 | Validation Loss: 0.350
-- Epoch: 09 | Time: 9m 9s
+- Epoch: 02 | Time: 9m 6s
+		Train Loss: 0.362 | Validation Loss: 0.350
+- Epoch: 03 | Time: 9m 9s
 		Train Loss: 0.346 | Validation Loss: 0.342
-- Epoch: 10 | Time: 9m 11s
+- Epoch: 04 | Time: 9m 11s
 		Train Loss: 0.338 | Validation Loss: 0.338
+- Epoch: 05 | Time: 9m 12s
+		Train Loss: 0.332 | Validation Loss: 0.336
+- Epoch: 06 | Time: 9m 13s
+		Train Loss: 0.329 | Validation Loss: 0.334
 
-> **Training Loss**: Converged to ~0.338
 
-> **Validation Loss**: Converged to ~0.338
+> **Training Loss**: Converged to ~0.3613
+
+> **Validation Loss**: Converged to ~0.3445
 
 > **BLEU Score**: ~7.05 (demonstrating semantic understanding of code intent)
 
